@@ -48,7 +48,7 @@ app.use('/api', apiRouter);
 
 //app.get('/', (req: Request, res: Response) => {
 apiRouter.get('/', (req: Request, res: Response) => {
-    res.send('Greeting from insurance-api!');
+    res.send('Greeting from insurance-api! (CI/CD version)');
 });
 
 //app.post('/find-insurance', (req: Request, res: Response) => {
