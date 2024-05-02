@@ -13,36 +13,50 @@ const insurances = [
     insurance1, insurance2
 ];
 
-const whitelist = ['http://localhost:3000', 'https://insurance-partner.net']; 
-
-const corsOptions: CorsOptions = {
-    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-      if (origin && whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'), false); 
-      }
-    }
-}
-
 app.use(express.json());
 
-app.use(cors(corsOptions));
+const whitelist = ['http://localhost:3000', 'https://insurance-partner.net']; 
+
+
+function checkAdditionalSecurity(req: Request) {
+  return req.headers['sec-fetch-site'] === 'same-origin';
+}
+  
+app.use((req: Request, res: Response, next: any) => {
+const corsOptions: CorsOptions = {
+    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+            if (origin && whitelist.indexOf(origin) !== -1) {
+                callback(null, true);
+            } 
+            else if(origin === undefined)
+            {
+                if (checkAdditionalSecurity(req)) {
+                    callback(null, true); 
+                } else {
+                    callback(new Error('Not allowed by CORS and security policies'), false);
+                }  
+            }
+            else {
+                callback(new Error('Not allowed by CORS'), false); 
+            }
+        }
+    }
+    cors(corsOptions)(req, res, next);
+});
 
 const apiRouter = express.Router();
 
 app.use('/api', apiRouter);
 
 apiRouter.get('/', (req: Request, res: Response) => {
-    res.send('Greeting from insurance-api! (CI/CD version, CORS)');
+    res.send('Greeting from insurance-api! (CI/CD) (CORS), checkAdditionalSecurity: ');
 });
 
 apiRouter.post('/find-insurance', (req: Request, res: Response) => {
-    console.log("req: ", req);
     const { dateOfAccident, ssn } = req.body;
     const insurance = insurances.find(ins => ins.dateOfAccident === dateOfAccident && ins.ssn === ssn);
     if (insurance) {
-        res.json({ message: `Your insurance number is ${insurance.insuranceNumber}` });
+        res.json({ message: `(CORS) Your insurance number is ${insurance.insuranceNumber}` });
     } else {
         res.json({ message: "No insurance found" });
     }
