@@ -3,7 +3,7 @@ name: CI/CD Pipeline for Insurance API
 on:
   push:
     branches:
-      - development
+      - main
 
 jobs:
   build_and_push:
