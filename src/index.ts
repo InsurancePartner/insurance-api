@@ -25,9 +25,15 @@ const insurance3: Insurance = {
     ssn: "012345-6789", 
     imageFileName: "fire.jpg", 
 };
+const insurance4: Insurance = {
+    insuranceNumber: "987",
+    ssn: "123456-7890",
+    imageFileName: "fire.jpg",
+};
+
 
 const insurances = [
-    insurance1, insurance2, insurance3
+    insurance1, insurance2, insurance3, insurance4
 ];
 
 app.use(express.json());
@@ -65,7 +71,7 @@ const apiRouter = express.Router();
 app.use('/api', apiRouter);
 
 apiRouter.get('/', (req: Request, res: Response) => {
-    res.send('Greeting from insurance-api! (insuranceType → imageFileName)');
+    res.send('Greeting from insurance-api!');
 });
 
 function generatePresignedUrl(key: string) {
@@ -88,12 +94,18 @@ function generatePresignedUrl(key: string) {
 
 apiRouter.post('/find-insurance', async (req: Request, res: Response) => {
     const { ssn } = req.body;
-    const insurance = insurances.find(ins => ins.ssn === ssn);
+    const matchedInsurances = insurances.filter(ins => ins.ssn === ssn);
     
-    if (insurance) {
+    if (matchedInsurances.length > 0) {
         try {
-            const url = await generatePresignedUrl(insurance.imageFileName);
-            res.json({ message: `Your insurance number is ${insurance.insuranceNumber}`, imageUrl: url });
+            const insuranceData = await Promise.all(matchedInsurances.map(async insurance => {
+                const imageUrl = await generatePresignedUrl(insurance.imageFileName);
+                return {
+                    insuranceNumber: insurance.insuranceNumber,
+                    imageUrl: imageUrl
+                };
+            }));
+            res.json(insuranceData);
         } catch (err) {
             console.error('Error generating pre-signed URL:', err);
             res.status(500).json({ message: 'Error generating pre-signed URL' });
@@ -101,7 +113,7 @@ apiRouter.post('/find-insurance', async (req: Request, res: Response) => {
     } else {
         try {
             const url = await generatePresignedUrl("not_found.jpg");
-            res.json({ message: "No insurance found", imageUrl: url });
+            res.json([{ insuranceNumber: "-1", imageUrl: url }]);
         } catch (err) {
             console.error('Error generating pre-signed URL:', err);
             res.status(500).json({ message: 'Error generating pre-signed URL' });
