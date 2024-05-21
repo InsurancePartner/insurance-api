@@ -13,7 +13,7 @@ import s3 from './config/s3Client';
 const insurance1: Insurance = { 
     insuranceNumber: "123", 
     ssn: "123456-7890", 
-    imageFileName: "car_accident.jpg", 
+    imageFileName: "car.jpg",
 };
 const insurance2: Insurance = { 
     insuranceNumber: "456", 
@@ -30,10 +30,29 @@ const insurance4: Insurance = {
     ssn: "123456-7890",
     imageFileName: "fire.jpg",
 };
-
+const insurance5: Insurance = {
+    insuranceNumber: "979",
+    ssn: "123456-7890",
+    imageFileName: "travel.jpg",
+};
+const insurance6: Insurance = {
+    insuranceNumber: "958",
+    ssn: "123456-7890",
+    imageFileName: "medical.jpg",
+};
+const insurance7: Insurance = {
+    insuranceNumber: "972",
+    ssn: "012345-6789",
+    imageFileName: "liability.jpg",
+};
+const insurance8: Insurance = {
+    insuranceNumber: "969",
+    ssn: "012345-6789",
+    imageFileName: "cyber.jpg",
+};
 
 const insurances = [
-    insurance1, insurance2, insurance3, insurance4
+    insurance1, insurance2, insurance3, insurance4, insurance5, insurance6, insurance7, insurance8
 ];
 
 app.use(express.json());
@@ -102,7 +121,8 @@ apiRouter.post('/find-insurance', async (req: Request, res: Response) => {
                 const imageUrl = await generatePresignedUrl(insurance.imageFileName);
                 return {
                     insuranceNumber: insurance.insuranceNumber,
-                    imageUrl: imageUrl
+                    imageUrl: imageUrl,
+                    imageFileName: insurance.imageFileName
                 };
             }));
             res.json(insuranceData);
