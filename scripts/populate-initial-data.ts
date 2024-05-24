@@ -1,7 +1,9 @@
 const mysql = require('mysql2/promise');
 
 console.log("INSIDE scripts/populate-initial-data.ts");
-//process.env.DB_HOST = process.env.DB_HOST?.replace(":3306", "");
+console.log("process.env.DB_HOST (before trimming): ", process.env.DB_HOST);
+process.env.DB_HOST = process.env.DB_HOST?.replace(":3306", "");
+console.log("process.env.DB_HOST (after trimming): ", process.env.DB_HOST);
 
 async function populateData() {
   const connection = await mysql.createConnection({
