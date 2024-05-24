@@ -60,7 +60,7 @@ jobs:
     - name: Install dependencies
       run: npm install
     - name: Populate database with initial data
-      run: node scripts/populate-initial-data.js
+      run: node scripts/populate-initial-data.ts
       env:
         DB_HOST: ${{ secrets.DB_HOST }}
         DB_USER: ${{ secrets.DB_USER }}
