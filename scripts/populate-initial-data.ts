@@ -8,11 +8,13 @@ console.log("process.env.DB_HOST (after trimming): ", process.env.DB_HOST);
 export const handler = async (event: any, context: any) => {
   console.log("Lambda Function triggered");
   console.log("Attempting to connect to database");
+  console.log("Port number explicitly specified: 3306");
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
-    database: 'insuranceDB'
+    database: 'insuranceDB',
+    port: 3306,
   });
 
   console.log("Database connection established");
