@@ -1,11 +1,12 @@
 const mysql = require('mysql2/promise');
 
 console.log("INSIDE scripts/populate-initial-data.ts");
-console.log("process.env.DB_HOST (before trimming): ", process.env.DB_HOST);
+//console.log("process.env.DB_HOST (before trimming): ", process.env.DB_HOST);
 process.env.DB_HOST = process.env.DB_HOST?.replace(":3306", "");
-console.log("process.env.DB_HOST (after trimming): ", process.env.DB_HOST);
+//console.log("process.env.DB_HOST (after trimming): ", process.env.DB_HOST);
 
-async function populateData() {
+export const handler = async (event: any, context: any) => {
+  console.log("Lambda Function triggered");
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -34,5 +35,3 @@ async function populateData() {
     await connection.end();
   }
 }
-
-populateData();
