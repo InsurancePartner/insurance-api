@@ -3,16 +3,19 @@ const mysql = require('mysql2/promise');
 console.log("INSIDE scripts/populate-initial-data.ts");
 //console.log("process.env.DB_HOST (before trimming): ", process.env.DB_HOST);
 process.env.DB_HOST = process.env.DB_HOST?.replace(":3306", "");
-//console.log("process.env.DB_HOST (after trimming): ", process.env.DB_HOST);
+console.log("process.env.DB_HOST (after trimming): ", process.env.DB_HOST);
 
 export const handler = async (event: any, context: any) => {
   console.log("Lambda Function triggered");
+  console.log("Attempting to connect to database");
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: 'insuranceDB'
   });
+
+  console.log("Database connection established");
 
   try {
     const [rows] = await connection.execute("SELECT COUNT(*) AS count FROM Insurances");
