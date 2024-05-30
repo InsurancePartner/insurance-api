@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 
+console.log("AFTER the creation of a private route table...");
 console.log("INSIDE scripts/populate-initial-data.ts");
 //console.log("process.env.DB_HOST (before trimming): ", process.env.DB_HOST);
 process.env.DB_HOST = process.env.DB_HOST?.replace(":3306", "");
