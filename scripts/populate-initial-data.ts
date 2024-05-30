@@ -11,14 +11,30 @@ export const handler = async (event: any, context: any) => {
   console.log("Lambda Function triggered");
   console.log("Attempting to connect to database");
   console.log("Port number explicitly specified: 3306");
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: 'insuranceDB',
-    port: 3306,
-  });
+  try {
+    console.log("Testing database connection");
+    const connection = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: 'insuranceDB',
+      port: 3306,
+    });
+    console.log("Database connection established");
+    await connection.end();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Connection successful" }),
+    };
+  } catch (error) {
+    console.error('Connection failed:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Connection failed", error }),
+    };
+  }
 
+/*
   console.log("Database connection established");
 
   try {
@@ -40,5 +56,5 @@ export const handler = async (event: any, context: any) => {
     console.error('Failed to populate data:', error);
   } finally {
     await connection.end();
-  }
+  }*/
 }
